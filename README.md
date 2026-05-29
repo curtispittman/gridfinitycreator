@@ -39,6 +39,21 @@ Now you can access the application by opening a browser and navigating to <ip-ad
 
 `http://192.168.1.100:5000/`
 
+## Deploying with Portainer (e.g. on a NAS)
+
+If you run [Portainer](https://www.portainer.io/) on a NAS or home server, you can deploy the generator as a stack without using the command line. A ready-made `docker-compose.portainer.yml` is included that builds the image directly from this repository, stores logs in a named Docker volume, and keeps the generated files on a RAMdisk - so there is no external network or host path to configure first.
+
+1. In Portainer, go to **Stacks → Add stack** and choose the **Repository** build method.
+2. Set the **Repository URL** to your fork (e.g. `https://github.com/curtispittman/gridfinitycreator`).
+3. Set the **Repository reference** to the branch you want to deploy, e.g. `refs/heads/feature/3d-preview`.
+4. Set the **Compose path** to `docker-compose.portainer.yml`.
+5. (Optional) Under **Environment variables**, set `GFG_PORT` to change the published port (default `5000`) and `TZ` for log timestamps (default `Etc/UTC`).
+6. Click **Deploy the stack**.
+
+Portainer clones the repository onto the host and builds the Docker image there, so no image registry is required. The first deploy takes a while because the cadquery/conda dependencies are sizeable - give it a few minutes and watch the build logs. Once the container is healthy, open `http://<nas-ip>:5000/` in your browser.
+
+To update after pulling new commits, open the stack and use **Pull and redeploy** (enable "Re-build image" so the new code is baked in).
+
 ## Debug mode
 
 The deploy script results in the server running in production mode using the [Waitress WSGI server](https://flask.palletsprojects.com/en/2.2.x/deploying/waitress/). This is good for performance, but if you want to debug the code, start the server using the "./debug.sh" script instead of "./deploy.sh". This will make the server start itself using the built-in Flask server, which has convenient debugging features.
