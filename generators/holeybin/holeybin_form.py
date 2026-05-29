@@ -52,8 +52,8 @@ class Form(FlaskForm):
         
     def get_rows(self):
         return [
-            ["Size", [self.sizeUnitsX, self.sizeUnitsY, self.keepoutDiameter]],
-            ["Holes", [self.numHolesX, self.numHolesY, self.holeShape, self.holeSize, self.holeDepth]],
+            ["Size", [self.sizeUnitsX, self.sizeUnitsY]],
+            ["Holes", [self.numHolesX, self.numHolesY, self.holeShape, self.holeSize, self.holeDepth, self.keepoutDiameter]],
             ["Magnets", [self.addMagnetHoles, self.addRemovalHoles, self.addScrewHoles, self.magnetHoleDiameter]],
             ["Other", [self.addStackingLip, self.exportFormat]],
         ]
