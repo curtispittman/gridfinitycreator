@@ -15,7 +15,7 @@ class Form(FlaskForm):
     compartmentsX   = IntegerField("Width direction", widget=NumberInput(min = 1, max = Grid.MAX_COMPARTMENTS_PER_GRID_UNIT*Grid.MAX_GRID_UNITS), default=3)
     compartmentsY   = IntegerField("Length direction", widget=NumberInput(min = 1, max = Grid.MAX_COMPARTMENTS_PER_GRID_UNIT*Grid.MAX_GRID_UNITS), default=3)
     addStackingLip  = BooleanField("Stacking lip", default="checked", false_values=(False, "false", ""))
-    addMagnetHoles  = BooleanField("Magnet holes", default="true", false_values=(False, "false", ""))
+    addMagnetHoles  = BooleanField("Magnet holes", default=False, false_values=(False, "false", ""))
     magnetHoleDiameter = DecimalField("Magnet-hole diameter", default = 6.5, places = 2)
     addRemovalHoles = BooleanField("Magnet removal holes", false_values=(False, "false", ""))
     addScrewHoles   = BooleanField("Screw holes", false_values=(False, "false", ""))
@@ -51,7 +51,7 @@ class Form(FlaskForm):
         ]
 
     def get_title(self):
-        return "Divider bin"
+        return "Divider Bin"
     
     def get_settings_html(self):
         return get_standard_settings_form()

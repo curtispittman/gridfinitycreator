@@ -11,7 +11,7 @@ class Form(FlaskForm):
     sizeUnitsY     = IntegerField("Length", widget=NumberInput(min = 1, max = Grid.MAX_GRID_UNITS), default=2)
     sizeUnitsZ     = IntegerField("Height", widget=NumberInput(min = 1, max = Grid.MAX_HEIGHT_UNITS), default=6)
     addStackingLip = BooleanField("Stacking lip", default="True")
-    addMagnetHoles = BooleanField("Magnet holes", default="True")
+    addMagnetHoles = BooleanField("Magnet holes", default=False)
     magnetHoleDiameter = DecimalField("Magnet-hole diameter", default = 6.5, places = 2)
     addRemovalHoles = BooleanField("Magnet removal holes", default="False")
     addScrewHoles   = BooleanField("Screw holes", default="False")
@@ -28,7 +28,7 @@ class Form(FlaskForm):
         ]
     
     def get_title(self):
-        return "Solid bin"
+        return "Solid Bin"
     
     def get_settings_html(self):
         return get_standard_settings_form()

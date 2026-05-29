@@ -19,7 +19,7 @@ class Form(FlaskForm):
     holeSize       = DecimalField("Size", default = 4.0, places = 2)
     keepoutDiameter = DecimalField("Keepout diameter", default = 12.0, places = 2)
     addStackingLip  = BooleanField("Stacking lip", default="checked", false_values=(False, "false", ""))
-    addMagnetHoles  = BooleanField("Magnet holes", default="true", false_values=(False, "false", ""))
+    addMagnetHoles  = BooleanField("Magnet holes", default=False, false_values=(False, "false", ""))
     magnetHoleDiameter = DecimalField("Magnet-hole diameter", default = 6.5, places = 2)
     addRemovalHoles = BooleanField("Magnet removal holes", false_values=(False, "false", ""))
     addScrewHoles   = BooleanField("Screw holes", false_values=(False, "false", ""))
@@ -52,14 +52,14 @@ class Form(FlaskForm):
         
     def get_rows(self):
         return [
-            ["Hole grid", [self.numHolesX, self.numHolesY, self.sizeUnitsX, self.sizeUnitsY, self.keepoutDiameter]],
-            ["Holes", [self.holeShape, self.holeSize, self.holeDepth]],
-            ["Other", [self.addStackingLip, self.exportFormat]],
+            ["Size", [self.sizeUnitsX, self.sizeUnitsY, self.keepoutDiameter]],
+            ["Holes", [self.numHolesX, self.numHolesY, self.holeShape, self.holeSize, self.holeDepth]],
             ["Magnets", [self.addMagnetHoles, self.addRemovalHoles, self.addScrewHoles, self.magnetHoleDiameter]],
+            ["Other", [self.addStackingLip, self.exportFormat]],
         ]
-    
+
     def get_title(self):
-        return "Holey bin"
+        return "Holey Bin"
 
     def get_settings_html(self):
         with open(os.path.dirname(__file__) + '/holeybin_settings_form.html', 'r') as reader:

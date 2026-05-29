@@ -31,7 +31,7 @@ class Form(FlaskForm):
         ]
     
     def get_title(self):
-        return "Light bin"
+        return "Light Bin"
     
     def get_settings_html(self):
         return get_standard_settings_form()

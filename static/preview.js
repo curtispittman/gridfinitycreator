@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const viewers = {};
 
 // Default model colour; kept in sync with the colour picker's default in the settings form.
-const DEFAULT_MODEL_COLOR = 0xd8cfc0;
+const DEFAULT_MODEL_COLOR = 0x14b8a6;
 
 function createViewer(container) {
     const width = container.clientWidth || 600;

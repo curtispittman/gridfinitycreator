@@ -214,6 +214,7 @@ a:hover { text-decoration: underline; }
 }
 .gfc-card__head .title { display: inline-flex; align-items: center; gap: 0.5rem; }
 .gfc-card__head .title i { color: var(--primary); }
+.gfc-card__head .btn { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
 
 /* --------------------------------------------------------------------------
    Preview pane

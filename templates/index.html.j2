@@ -2,8 +2,12 @@
 
 {% block content %}
 
-{# Default component shown on load - the Divider bin designer #}
+{# Default component shown on load - the Divider Bin designer. Baseplate is pinned last. #}
 {% set default_component = 'classicbin' %}
+{% set last_component = 'baseplate' %}
+{% set ordered_forms = (forms | selectattr('id', 'equalto', default_component) | list)
+  + (forms | rejectattr('id', 'equalto', default_component) | rejectattr('id', 'equalto', last_component) | list)
+  + (forms | selectattr('id', 'equalto', last_component) | list) %}
 
 {% macro component_panel(form, hidden) %}
 <section class="component-panel{% if hidden %} d-none{% endif %}" data-component="{{ form.id }}">
@@ -30,6 +34,11 @@
     <div class="gfc-card settings-pane">
       <div class="gfc-card__head">
         <span class="title"><i class="bi bi-sliders"></i> {{ form.get_title() }}</span>
+        <button type="submit" form="{{ form.id }}_form" name="{{ form.id }}" id="{{ form.id }}_button"
+          class="btn btn-primary btn-sm">
+          <i class="bi bi-download" aria-hidden="true"></i>
+          <span>Generate</span>
+        </button>
       </div>
       <div class="settings-body">
         <details class="component-about">
@@ -66,11 +75,8 @@
     <div class="component-picker">
       <label class="component-picker__label" for="component-selector">Component</label>
       <select id="component-selector" class="form-select component-select" aria-label="Choose a component to design">
-        {% for form in forms if form.id == default_component %}
-        <option value="{{ form.id }}" selected>{{ form.get_title() }}</option>
-        {% endfor %}
-        {% for form in forms if form.id != default_component %}
-        <option value="{{ form.id }}">{{ form.get_title() }}</option>
+        {% for form in ordered_forms %}
+        <option value="{{ form.id }}"{% if form.id == default_component %} selected{% endif %}>{{ form.get_title() }}</option>
         {% endfor %}
       </select>
     </div>
@@ -78,11 +84,8 @@
 </header>
 
 <main class="workspace">
-  {% for form in forms if form.id == default_component %}
-  {{ component_panel(form, false) }}
-  {% endfor %}
-  {% for form in forms if form.id != default_component %}
-  {{ component_panel(form, true) }}
+  {% for form in ordered_forms %}
+  {{ component_panel(form, form.id != default_component) }}
   {% endfor %}
 </main>
 
