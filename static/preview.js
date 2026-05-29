@@ -10,7 +10,7 @@ function createViewer(container) {
     const height = container.clientHeight || 400;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf8f9fa);
+    scene.background = new THREE.Color(0x8d8378);
 
     // The bins are modelled with Z pointing up (as in CAD), so tell the camera the same.
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 10000);
@@ -66,9 +66,9 @@ function setMesh(viewer, geometry) {
     geometry.translate(-center.x, -center.y, -center.z);
 
     const material = new THREE.MeshPhongMaterial({
-        color: 0x2c3e50,
-        specular: 0x222222,
-        shininess: 25,
+        color: 0xd8cfc0,
+        specular: 0x0a0a0a,
+        shininess: 10,
         flatShading: false,
     });
     const mesh = new THREE.Mesh(geometry, material);

@@ -49,37 +49,36 @@
         </div>
       </div>
       <div class="row p-3">
-        <div class="col">
-          <div class="card p-0">
-            <div class="card-header text-white bg-primary d-flex justify-content-between align-items-center">
-              <span>3D Preview</span>
-              <small class="fw-light">Drag to rotate &middot; scroll to zoom</small>
-            </div>
-            <div class="card-body p-0">
-              <div id="{{form.id}}_preview" class="gfc-preview" style="position: relative; height: 400px; background: #f8f9fa; overflow: hidden;">
-                <div id="{{form.id}}_preview_placeholder"
-                  class="d-flex h-100 align-items-center justify-content-center text-secondary text-center px-3">
-                  Click "Preview" below to render a 3D model of your design.
-                </div>
-                <div id="{{form.id}}_preview_spinner"
-                  class="d-none position-absolute top-50 start-50 translate-middle">
-                  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
-                </div>
-              </div>
-              <div id="{{form.id}}_preview_error" class="d-none alert alert-warning rounded-0 mb-0" role="alert"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row p-3">
-        <div class="col">
-          <div class="card p-0">
+        <div class="col-lg-7 mb-3 mb-lg-0">
+          <div class="card p-0 h-100">
             <div class="card-header text-white bg-primary">Settings</div>
             <div class="card-body">
               <form method="post" id="{{form.id}}_form">
                 {{ form.csrf_token() }}
                 {{ form.get_settings_html() | inner_render({"form":form}) }}
               </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card p-0" style="position: sticky; top: 1rem;">
+            <div class="card-header text-white bg-primary d-flex justify-content-between align-items-center">
+              <span>3D Preview</span>
+              <small class="fw-light">Drag to rotate &middot; scroll to zoom</small>
+            </div>
+            <div class="card-body p-0">
+              <div id="{{form.id}}_preview" class="gfc-preview" style="position: relative; height: 400px; background: #8d8378; overflow: hidden;">
+                <div id="{{form.id}}_preview_placeholder"
+                  class="d-flex h-100 align-items-center justify-content-center text-center px-3"
+                  style="color: #efe9e0;">
+                  Click "Preview" below to render a 3D model of your design.
+                </div>
+                <div id="{{form.id}}_preview_spinner"
+                  class="d-none position-absolute top-50 start-50 translate-middle">
+                  <div class="spinner-border text-light" role="status"><span class="visually-hidden">Loading...</span></div>
+                </div>
+              </div>
+              <div id="{{form.id}}_preview_error" class="d-none alert alert-warning rounded-0 mb-0" role="alert"></div>
             </div>
           </div>
         </div>
