@@ -197,24 +197,37 @@ function setupAutoPreview() {
         form.addEventListener('change', onChange);
     });
 
-    // Render each generator's default model the first time its tab becomes visible
+    // Render a component's default model the first time its panel becomes visible
     // (the container needs to be on-screen so the renderer can size itself).
-    const renderTab = (formId) => {
+    const renderOnce = (formId) => {
         if (!formId || rendered[formId]) return;
         if (!document.getElementById(formId + '_preview')) return;
         rendered[formId] = true;
         window.gfcPreview(formId);
     };
 
-    document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tabBtn) => {
-        tabBtn.addEventListener('shown.bs.tab', (event) => {
-            const href = event.target.getAttribute('href') || event.target.getAttribute('data-bs-target') || '';
-            if (href.startsWith('#')) renderTab(href.slice(1));
-        });
-    });
+    // The component dropdown drives which panel is shown; the rest are hidden.
+    const selector = document.getElementById('component-selector');
+    const panels = document.querySelectorAll('.component-panel');
 
-    // If a generator tab is already active on load (e.g. via a URL hash), render it.
-    document.querySelectorAll('.tab-pane.active').forEach((pane) => renderTab(pane.id));
+    const showComponent = (formId) => {
+        panels.forEach((panel) => {
+            panel.classList.toggle('d-none', panel.getAttribute('data-component') !== formId);
+        });
+        if (selector && selector.value !== formId) selector.value = formId;
+        renderOnce(formId);
+    };
+    window.gfcShowComponent = showComponent;
+
+    if (selector) {
+        selector.addEventListener('change', () => showComponent(selector.value));
+        showComponent(selector.value);
+    } else {
+        // No selector present: render whichever panel is currently visible.
+        document.querySelectorAll('.component-panel:not(.d-none)').forEach((panel) => {
+            renderOnce(panel.getAttribute('data-component'));
+        });
+    }
 }
 
 if (document.readyState === 'loading') {
