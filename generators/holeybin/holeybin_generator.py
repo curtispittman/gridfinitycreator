@@ -19,9 +19,8 @@ class Generator:
         """Precalculate a number of useful derived values used in construction"""
         self.settings.sizeUnitsX = math.ceil((self.settings.numHolesX * self.settings.keepoutDiameter + 2*self.grid.WALL_THICKNESS + self.grid.BRICK_SIZE_TOLERANCE_MM) / self.grid.GRID_UNIT_SIZE_X_MM)
         self.settings.sizeUnitsY = math.ceil((self.settings.numHolesY * self.settings.keepoutDiameter + 2*self.grid.WALL_THICKNESS + self.grid.BRICK_SIZE_TOLERANCE_MM) / self.grid.GRID_UNIT_SIZE_Y_MM)
-        self.settings.sizeUnitsZ = 1 + math.ceil(self.settings.holeDepth / self.grid.HEIGHT_UNITSIZE_MM)
 
-        self.brickSizeX = self.settings.sizeUnitsX * self.grid.GRID_UNIT_SIZE_X_MM - self.grid.BRICK_SIZE_TOLERANCE_MM 
+        self.brickSizeX = self.settings.sizeUnitsX * self.grid.GRID_UNIT_SIZE_X_MM - self.grid.BRICK_SIZE_TOLERANCE_MM
         self.brickSizeY = self.settings.sizeUnitsY * self.grid.GRID_UNIT_SIZE_Y_MM - self.grid.BRICK_SIZE_TOLERANCE_MM
         self.brickSizeZ = self.settings.sizeUnitsZ*self.grid.HEIGHT_UNITSIZE_MM
         self.internalSizeX = self.brickSizeX-2*self.grid.WALL_THICKNESS
@@ -97,6 +96,10 @@ class Generator:
         # Cap the size in grid-units to avoid thrashing the server
         self.settings.sizeUnitsX = min(self.settings.sizeUnitsX, self.grid.MAX_GRID_UNITS)
         self.settings.sizeUnitsY = min(self.settings.sizeUnitsY, self.grid.MAX_GRID_UNITS)
+
+        # The user sets the height, but the bin must always be tall enough to contain the holes
+        minHeightForHoles = 1 + math.ceil(self.settings.holeDepth / self.grid.HEIGHT_UNITSIZE_MM)
+        self.settings.sizeUnitsZ = max(self.settings.sizeUnitsZ, minHeightForHoles, self.grid.MIN_HEIGHT_UNITS)
         self.settings.sizeUnitsZ = min(self.settings.sizeUnitsZ, self.grid.MAX_HEIGHT_UNITS)
 
     def generate_model(self):

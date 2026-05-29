@@ -14,6 +14,7 @@ class Form(FlaskForm):
     numHolesY      = IntegerField("# holes in length direction", widget=NumberInput(min = 1), default=3)
     sizeUnitsX     = IntegerField("Width in grid-units", widget=NumberInput(min = 1, max = Grid.MAX_GRID_UNITS), default=1)
     sizeUnitsY     = IntegerField("Length in grid-units", widget=NumberInput(min = 1, max = Grid.MAX_GRID_UNITS), default=1)
+    sizeUnitsZ     = IntegerField("Height", widget=NumberInput(min = Grid.MIN_HEIGHT_UNITS, max = Grid.MAX_HEIGHT_UNITS), default=6)
     holeDepth      = DecimalField("Depth", default = 5.0, places = 2)
     holeShape      = SelectField("Shape", choices=[(choice.name, choice.value) for choice in HoleShape])
     holeSize       = DecimalField("Size", default = 4.0, places = 2)
@@ -34,6 +35,7 @@ class Form(FlaskForm):
         self.holeShape.description = help.get_holey_shape_help()
         self.sizeUnitsX.description = help.get_holey_gridspec_help()
         self.sizeUnitsY.description = help.get_holey_gridspec_help()
+        self.sizeUnitsZ.description = help.get_size_help()
         self.holeSize.description = help.get_holey_size_help()
         self.keepoutDiameter.description = help.get_holey_keepout_help()
         self.addStackingLip.description = help.get_stackinglip_help()
@@ -47,12 +49,13 @@ class Form(FlaskForm):
         self.numHolesY.onChangedCallback = "onNumHolesChanged()"
         self.sizeUnitsX.onChangedCallback = "onBinSizeChanged()"
         self.sizeUnitsY.onChangedCallback = "onBinSizeChanged()"
+        self.sizeUnitsZ.onChangedCallback = ""
         self.keepoutDiameter.onChangedCallback = "onHoleSizeChanged()"
         self.holeSize.onChangedCallback = "onHoleSizeChanged()"
         
     def get_rows(self):
         return [
-            ["Size", [self.sizeUnitsX, self.sizeUnitsY]],
+            ["Size", [self.sizeUnitsX, self.sizeUnitsY, self.sizeUnitsZ]],
             ["Holes", [self.numHolesX, self.numHolesY, self.holeShape, self.holeSize, self.holeDepth, self.keepoutDiameter]],
             ["Magnets", [self.addMagnetHoles, self.addRemovalHoles, self.addScrewHoles, self.magnetHoleDiameter]],
             ["Other", [self.addStackingLip, self.exportFormat]],

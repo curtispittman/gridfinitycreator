@@ -23,6 +23,7 @@ def process(form, constants, preview=False):
     s.numHolesY = form.numHolesY.data
     s.sizeUnitsX = form.sizeUnitsX.data
     s.sizeUnitsY = form.sizeUnitsY.data
+    s.sizeUnitsZ = form.sizeUnitsZ.data
     s.holeShape = form.holeShape.data
     s.holeSize = float(form.holeSize.data)
     s.holeDepth      = float(form.holeDepth.data)
