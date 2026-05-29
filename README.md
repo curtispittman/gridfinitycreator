@@ -10,7 +10,7 @@ The total number of possible combinations with those options is beyond one milli
 
 ## 3D preview
 
-Before downloading, you can render an interactive 3D preview of the component you configured. Each generator tab has a "Preview" button next to "Generate"; clicking it renders the current settings in a viewer (drag to rotate, scroll to zoom). The preview is always generated as an STL regardless of the selected export format, while "Generate" still downloads the file in the format you chose (STL or STEP).
+Each generator tab shows an interactive 3D preview of the component you configured (drag to rotate, scroll to zoom). The preview renders automatically when you open a tab and refreshes whenever you change a setting, so there is no separate "Preview" button. You can also recolour the model with the colour picker in the settings. The preview is always rendered from an STL regardless of the selected export format, while "Generate" still downloads the file in the format you chose (STL or STEP).
 
 ## Available components
 

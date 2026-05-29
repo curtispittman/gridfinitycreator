@@ -107,11 +107,16 @@ window.gfcPreview = async function (formId) {
     if (!viewers[formId]) {
         viewers[formId] = createViewer(container);
     }
+    const viewer = viewers[formId];
+
+    // Tag this request so a slower, older response can't overwrite a newer one.
+    const requestId = (viewer.requestId || 0) + 1;
+    viewer.requestId = requestId;
 
     // Apply the colour currently chosen in the settings form, if any.
     const colorInput = document.getElementById(formId + '_preview_color');
     if (colorInput && colorInput.value) {
-        viewers[formId].color = new THREE.Color(colorInput.value).getHex();
+        viewer.color = new THREE.Color(colorInput.value).getHex();
     }
 
     try {
@@ -126,21 +131,26 @@ window.gfcPreview = async function (formId) {
         }
 
         const buffer = await response.arrayBuffer();
+        // A newer change superseded this request while it was in flight - discard it.
+        if (viewer.requestId !== requestId) return;
+
         const geometry = new STLLoader().parse(buffer);
         if (!geometry.attributes.position || geometry.attributes.position.count === 0) {
             throw new Error('no model was returned (check the settings are valid)');
         }
-        setMesh(viewers[formId], geometry);
+        setMesh(viewer, geometry);
     } catch (err) {
+        if (viewer.requestId !== requestId) return;
         if (errorBox) {
             errorBox.textContent = 'Preview failed: ' + err.message;
             errorBox.classList.remove('d-none');
         }
-        if (!viewers[formId] || !viewers[formId].mesh) {
-            if (placeholder) placeholder.classList.remove('d-none');
+        if (!viewer.mesh && placeholder) {
+            placeholder.classList.remove('d-none');
         }
     } finally {
-        if (spinner) spinner.classList.add('d-none');
+        // Keep the spinner up until the most recent request settles.
+        if (spinner && viewer.requestId === requestId) spinner.classList.add('d-none');
     }
 };
 
@@ -153,3 +163,62 @@ window.gfcSetPreviewColor = function (formId, value) {
         viewer.mesh.material.color.set(value);
     }
 };
+
+function debounce(fn, delay) {
+    let timer;
+    return function () {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+    };
+}
+
+// Auto-regenerate the preview on load and whenever a setting changes, removing the
+// need for a manual "Preview" button.
+function setupAutoPreview() {
+    const rendered = {};
+
+    document.querySelectorAll('.gfc-preview').forEach((container) => {
+        const formId = container.id.replace(/_preview$/, '');
+        const form = document.getElementById(formId + '_form');
+        if (!form) return;
+
+        const regenerate = debounce(() => window.gfcPreview(formId), 500);
+
+        const onChange = (event) => {
+            const target = event.target;
+            // The colour picker recolours the model live; it must not hit the server.
+            if (target && (target.type === 'color' || (target.id || '').endsWith('_preview_color'))) {
+                return;
+            }
+            regenerate();
+        };
+
+        form.addEventListener('input', onChange);
+        form.addEventListener('change', onChange);
+    });
+
+    // Render each generator's default model the first time its tab becomes visible
+    // (the container needs to be on-screen so the renderer can size itself).
+    const renderTab = (formId) => {
+        if (!formId || rendered[formId]) return;
+        if (!document.getElementById(formId + '_preview')) return;
+        rendered[formId] = true;
+        window.gfcPreview(formId);
+    };
+
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tabBtn) => {
+        tabBtn.addEventListener('shown.bs.tab', (event) => {
+            const href = event.target.getAttribute('href') || event.target.getAttribute('data-bs-target') || '';
+            if (href.startsWith('#')) renderTab(href.slice(1));
+        });
+    });
+
+    // If a generator tab is already active on load (e.g. via a URL hash), render it.
+    document.querySelectorAll('.tab-pane.active').forEach((pane) => renderTab(pane.id));
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAutoPreview);
+} else {
+    setupAutoPreview();
+}
