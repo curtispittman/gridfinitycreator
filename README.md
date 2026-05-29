@@ -47,10 +47,12 @@ If you run [Portainer](https://www.portainer.io/) on a NAS or home server, you c
 2. Set the **Repository URL** to your fork (e.g. `https://github.com/curtispittman/gridfinitycreator`).
 3. Set the **Repository reference** to the branch you want to deploy, e.g. `refs/heads/feature/3d-preview`.
 4. Set the **Compose path** to `docker-compose.portainer.yml`.
-5. (Optional) Under **Environment variables**, set `GFG_PORT` to change the published port (default `5000`) and `TZ` for log timestamps (default `Etc/UTC`).
+5. (Optional) Under **Environment variables**, set `GFG_PORT` to change the published port (default `8085`) and `TZ` for log timestamps (default `Etc/UTC`).
 6. Click **Deploy the stack**.
 
-Portainer clones the repository onto the host and builds the Docker image there, so no image registry is required. The first deploy takes a while because the cadquery/conda dependencies are sizeable - give it a few minutes and watch the build logs. Once the container is healthy, open `http://<nas-ip>:5000/` in your browser.
+Portainer clones the repository onto the host and builds the Docker image there, so no image registry is required. The first deploy takes a while because the cadquery/conda dependencies are sizeable - give it a few minutes and watch the build logs. Once the container is healthy, open `http://<nas-ip>:8085/` in your browser.
+
+> **Synology note:** DSM (the NAS web interface) already uses ports `5000` and `5001`, so the stack publishes the app on `8085` by default to avoid the conflict. If you map it to `5000` you'll get a Synology "page not found" page instead of the app. The container itself still listens on `5000` internally - only the published host port differs.
 
 To update after pulling new commits, open the stack and use **Pull and redeploy** (enable "Re-build image" so the new code is baked in).
 
