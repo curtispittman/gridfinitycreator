@@ -13,13 +13,14 @@ function createViewer(container) {
     const height = container.clientHeight || 400;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x8d8378);
+    // Transparent background: the canvas shows through to the card behind it.
+    scene.background = null;
 
     // The bins are modelled with Z pointing up (as in CAD), so tell the camera the same.
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 10000);
     camera.up.set(0, 0, 1);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
