@@ -80,6 +80,9 @@ def index_post():
 
     message = ""
 
+    # A preview request renders the model in-browser instead of downloading a file
+    preview = 'preview' in request.form
+
     # Use the saved grid size if it was overridden
     if request.cookies.get('gridspec'):
         c = request.cookies.get('gridspec')
@@ -106,8 +109,8 @@ def index_post():
         form_list.append(f)
         if gen.handles(request, f):
             # Generate an STL with the provided settings
-            logger.info("Generating {0} for: {1}".format(f.get_title(), request.remote_addr))
-            return gen.process(f, constants)
+            logger.info("{0} {1} for: {2}".format("Previewing" if preview else "Generating", f.get_title(), request.remote_addr))
+            return gen.process(f, constants, preview=preview)
     
     response = make_response(render_index(form_list, constants, message))
     response.set_cookie('gridspec', str('{0},{1},{2}').format(constants.GRID_UNIT_SIZE_X_MM, constants.GRID_UNIT_SIZE_Y_MM, constants.HEIGHT_UNITSIZE_MM))

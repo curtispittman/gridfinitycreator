@@ -8,6 +8,10 @@ This application generates STL or STEP files of configurable Gridfinity compatib
 ![gridfinity-options](https://github.com/jeroen94704/gridfinitycreator/assets/548463/1577deb0-edc6-48d9-9a54-75fe3ecd335c)
 The total number of possible combinations with those options is beyond one million, which is why the 3D models are dynamically created and not pre-calculated.
 
+## 3D preview
+
+Before downloading, you can render an interactive 3D preview of the component you configured. Each generator tab has a "Preview" button next to "Generate"; clicking it renders the current settings in a viewer (drag to rotate, scroll to zoom). The preview is always generated as an STL regardless of the selected export format, while "Generate" still downloads the file in the format you chose (STL or STEP).
+
 ## Available components
 
 There are currently a few components available, listed below. Other components are in the works.

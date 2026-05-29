@@ -36,6 +36,10 @@
 </div>
 <div class="row justify-content-center">
     <div class="col text-center">
+        <button type="button" id="{{form.id}}_preview_button" class="btn btn-outline-primary"
+            onclick="gfcPreview('{{form.id}}')">
+            <span>Preview</span>
+        </button>
         <button type="submit" id="{{form.id}}_button" name="{{form.id}}" class="btn btn-primary">
             <!-- onclick="onClick{{form.id}}()"> -->
             <span>Generate</span>
