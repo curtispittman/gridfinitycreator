@@ -5,6 +5,9 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // One viewer instance per generator tab, keyed by form id.
 const viewers = {};
 
+// Default model colour; kept in sync with the colour picker's default in the settings form.
+const DEFAULT_MODEL_COLOR = 0xd8cfc0;
+
 function createViewer(container) {
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 400;
@@ -31,7 +34,7 @@ function createViewer(container) {
     camera.add(keyLight);
     scene.add(camera);
 
-    const viewer = { scene, camera, renderer, controls, mesh: null, container };
+    const viewer = { scene, camera, renderer, controls, mesh: null, container, color: DEFAULT_MODEL_COLOR };
 
     function animate() {
         requestAnimationFrame(animate);
@@ -66,7 +69,7 @@ function setMesh(viewer, geometry) {
     geometry.translate(-center.x, -center.y, -center.z);
 
     const material = new THREE.MeshPhongMaterial({
-        color: 0xd8cfc0,
+        color: viewer.color,
         specular: 0x0a0a0a,
         shininess: 10,
         flatShading: false,
@@ -104,6 +107,12 @@ window.gfcPreview = async function (formId) {
         viewers[formId] = createViewer(container);
     }
 
+    // Apply the colour currently chosen in the settings form, if any.
+    const colorInput = document.getElementById(formId + '_preview_color');
+    if (colorInput && colorInput.value) {
+        viewers[formId].color = new THREE.Color(colorInput.value).getHex();
+    }
+
     try {
         const formData = new FormData(form);
         // Mimic pressing the generator's "Generate" button, then flag this as a preview.
@@ -131,5 +140,15 @@ window.gfcPreview = async function (formId) {
         }
     } finally {
         if (spinner) spinner.classList.add('d-none');
+    }
+};
+
+// Update the model colour live from the settings colour picker, without re-generating.
+window.gfcSetPreviewColor = function (formId, value) {
+    const viewer = viewers[formId];
+    if (!viewer) return; // nothing rendered yet; the next preview will pick up the value
+    viewer.color = new THREE.Color(value).getHex();
+    if (viewer.mesh) {
+        viewer.mesh.material.color.set(value);
     }
 };
