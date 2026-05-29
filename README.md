@@ -8,6 +8,10 @@ This application generates STL or STEP files of configurable Gridfinity compatib
 ![gridfinity-options](https://github.com/jeroen94704/gridfinitycreator/assets/548463/1577deb0-edc6-48d9-9a54-75fe3ecd335c)
 The total number of possible combinations with those options is beyond one million, which is why the 3D models are dynamically created and not pre-calculated.
 
+## 3D preview
+
+Each generator tab shows an interactive 3D preview of the component you configured (drag to rotate, scroll to zoom). The preview renders automatically when you open a tab and refreshes whenever you change a setting, so there is no separate "Preview" button. You can also recolour the model with the colour picker in the settings. The preview is always rendered from an STL regardless of the selected export format, while "Generate" still downloads the file in the format you chose (STL or STEP).
+
 ## Available components
 
 There are currently a few components available, listed below. Other components are in the works.
@@ -34,6 +38,23 @@ The generator runs as a web-application in a docker container. To run your own i
 Now you can access the application by opening a browser and navigating to <ip-address-of-server>:5000, e.g.
 
 `http://192.168.1.100:5000/`
+
+## Deploying with Portainer (e.g. on a NAS)
+
+If you run [Portainer](https://www.portainer.io/) on a NAS or home server, you can deploy the generator as a stack without using the command line. A ready-made `docker-compose.portainer.yml` is included that builds the image directly from this repository, stores logs in a named Docker volume, and keeps the generated files on a RAMdisk - so there is no external network or host path to configure first.
+
+1. In Portainer, go to **Stacks → Add stack** and choose the **Repository** build method.
+2. Set the **Repository URL** to your fork (e.g. `https://github.com/curtispittman/gridfinitycreator`).
+3. Set the **Repository reference** to the branch you want to deploy, e.g. `refs/heads/feature/3d-preview`.
+4. Set the **Compose path** to `docker-compose.portainer.yml`.
+5. (Optional) Under **Environment variables**, set `GFG_PORT` to change the published port (default `8085`) and `TZ` for log timestamps (default `Etc/UTC`).
+6. Click **Deploy the stack**.
+
+Portainer clones the repository onto the host and builds the Docker image there, so no image registry is required. The first deploy takes a while because the cadquery/conda dependencies are sizeable - give it a few minutes and watch the build logs. Once the container is healthy, open `http://<nas-ip>:8085/` in your browser.
+
+> **Synology note:** DSM (the NAS web interface) already uses ports `5000` and `5001`, so the stack publishes the app on `8085` by default to avoid the conflict. If you map it to `5000` you'll get a Synology "page not found" page instead of the app. The container itself still listens on `5000` internally - only the published host port differs.
+
+To update after pulling new commits, open the stack and use **Pull and redeploy** (enable "Re-build image" so the new code is baked in).
 
 ## Debug mode
 

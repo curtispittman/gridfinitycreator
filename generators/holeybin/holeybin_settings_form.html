@@ -34,8 +34,14 @@
     {{ loop.cycle('','<div class="w-100"></div>')|safe }}
     {% endfor %}
 </div>
-<div class="row justify-content-center">
-    <div class="col text-center">
+<div class="row justify-content-center align-items-center g-2">
+    <div class="col-auto d-flex align-items-center">
+        <label for="{{form.id}}_preview_color" class="form-label mb-0 me-2 small">Preview color</label>
+        <input type="color" id="{{form.id}}_preview_color" value="#d8cfc0"
+            class="form-control form-control-color" title="Choose the preview model color"
+            oninput="gfcSetPreviewColor('{{form.id}}', this.value)">
+    </div>
+    <div class="col-auto">
         <button type="submit" id="{{form.id}}_button" name="{{form.id}}" class="btn btn-primary">
             <!-- onclick="onClick{{form.id}}()"> -->
             <span>Generate</span>

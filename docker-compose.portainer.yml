@@ -1,0 +1,43 @@
+# Portainer-friendly stack for self-hosting on a NAS.
+#
+# Deploy via Portainer > Stacks > Add stack > "Repository":
+#   - Repository URL:  <your fork's git URL>
+#   - Reference:       refs/heads/feature/3d-preview   (or your chosen branch)
+#   - Compose path:    docker-compose.portainer.yml
+#
+# Portainer clones the repo onto the NAS and builds the Dockerfile itself,
+# so no image registry is required. Override GFG_PORT / TZ under the stack's
+# "Environment variables" if you want to change them.
+#
+# NOTE: the published port defaults to 8085, NOT 5000. On Synology NAS the
+# DSM web interface already uses ports 5000/5001, so publishing the app on
+# 5000 collides with DSM (you'd get a Synology "page not found" page). The
+# container still listens on 5000 internally; only the host port differs.
+# Access the app at http://<nas-ip>:8085/ (or whatever GFG_PORT you set).
+
+services:
+  gridfinitycreator:
+    build: .
+    container_name: gridfinitycreator
+    # The cadquery/conda image only has amd64 (x86-64) support here.
+    platform: linux/amd64
+    # RAMdisk for the short-lived generated files, to avoid wearing out the NAS disk.
+    tmpfs:
+      - /tmpfiles
+    environment:
+      - TZ=${TZ:-Etc/UTC}
+    ports:
+      # Host port 8085 avoids Synology DSM's 5000/5001; container stays on 5000.
+      - "${GFG_PORT:-8085}:5000"
+    volumes:
+      - gridfinitycreator_logs:/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:5000/', timeout=5).getcode()==200 else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  gridfinitycreator_logs:
